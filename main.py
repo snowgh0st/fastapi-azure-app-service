@@ -50,3 +50,5 @@ def add_client(client: Client):
         return {"message": "Client added successfully", "client": client}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+# Test comment from main branch
