@@ -44,6 +44,7 @@ def get_db_connection():
 class Client(BaseModel):
     ClientCode: str
     ClientName: str
+    Matter_ID: str
 
 @contextmanager
 def get_db_cursor():
@@ -63,7 +64,7 @@ def get_db_cursor():
 def create_client(client: Client):
     try:
         with get_db_cursor() as cursor:
-            cursor.execute("INSERT INTO Clients (ClientCode, ClientName) VALUES (?, ?)", client.ClientCode, client.ClientName)
+            cursor.execute("INSERT INTO Clients (ClientCode, ClientName, Matter_ID) VALUES (?, ?, ?)", client.ClientCode, client.ClientName, client.Matter_ID)
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
     return {"message": "Client created successfully"}
@@ -73,7 +74,7 @@ def create_client(client: Client):
 def get_clients():
     try:
         with get_db_cursor() as cursor:
-            cursor.execute("SELECT ClientCode, ClientName FROM Clients")
+            cursor.execute("SELECT ClientCode, ClientName, Matter_ID FROM Clients")
             columns = [column[0] for column in cursor.description]
             results = [dict(zip(columns, row)) for row in cursor.fetchall()]
     except Exception as e:
@@ -85,7 +86,7 @@ def get_clients():
 def update_client(client_code: str, client: Client):
     try:
         with get_db_cursor() as cursor:
-            cursor.execute("UPDATE Clients SET ClientName = ? WHERE ClientCode = ?", client.ClientName, client_code)
+            cursor.execute("UPDATE Clients SET ClientName = ?, Matter_ID = ? WHERE ClientCode = ?", client.ClientName, client.Matter_ID, client_code)
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
     return {"message": "Client updated successfully"}
@@ -95,7 +96,7 @@ def update_client(client_code: str, client: Client):
 def patch_client(client_code: str, client: Client):
     try:
         with get_db_cursor() as cursor:
-            cursor.execute("UPDATE Clients SET ClientName = ? WHERE ClientCode = ?", client.ClientName, client_code)
+            cursor.execute("UPDATE Clients SET ClientName = ?, Matter_ID = ? WHERE ClientCode = ?", client.ClientName, client.Matter_ID, client_code)
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
     return {"message": "Client patched successfully"}
